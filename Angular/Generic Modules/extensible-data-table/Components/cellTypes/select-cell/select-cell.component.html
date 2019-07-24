@@ -1,0 +1,5 @@
+<div class="form-group">
+  <select placeholder="col.ColumnDescription" [formControl]="control">
+    <option *ngFor="let option of col.Cell.selectOptions" [ngValue]="option">{{option}}</option>
+  </select>
+</div>

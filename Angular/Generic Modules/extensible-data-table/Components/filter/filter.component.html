@@ -1,0 +1,46 @@
+<ng-container *ngIf="!Column.Filters || Column.Filters.length < 2; else MultiFilters">
+  <ng-container *ngIf="AdvancedFilters && Column.ReadAllowed; else SimpleFilter">
+    <div class="filter-icon advanced mr-1" (click)="triggerAdvancedFilter()"><i class="fa fa-filter"
+        aria-hidden="true"></i></div>
+    <div class="w-100 filter-display-wrapper">
+      <div>
+        <form class="d-flex align-items-stretch">
+          <input class="w-100" placeholder="{{Column.Filters[0].Operation}}" type="text" name="SingleFilter"
+            [(ngModel)]="Column.Filters[0].Value" (keyup)="filterStringModelChange()" autocomplete="off">
+            <span ngbDropdown class="filter-type d-flex align-items-center" container="body" placement="bottom-right" ngbDropdownToggle id="Filter-Type-Dropdown">
+              <i class="fa fa-chevron-down"  aria-hidden="true" ></i>
+              <div class="filter-dropdown" ngbDropdownMenu aria-labelledby="Filter-Type-Dropdown">
+                  <!-- <div ngbDropdownItem>Action - 1</div>
+                  <div ngbDropdownItem>Another Action</div>
+                  <div ngbDropdownItem>Something else is here</div> -->
+                  <div *ngFor="let type of filterTypeKeys" ngbDropdownItem (click)="changeFilterType(type)">{{filterTypes[type]}}</div>
+                </div>
+            </span>
+            
+        </form>
+        <span></span>
+      </div>
+
+    </div>
+  </ng-container>
+  <ng-template #SimpleFilter>
+    <div class="filter-icon mr-1"><i class="fa fa-filter" aria-hidden="true"></i></div>
+    <div class="w-100 filter-display-wrapper">
+      <div>
+        <form>
+          <input class="w-100 simple" placeholder="Filter" type="text" name="SimpleFilter"
+            [(ngModel)]="Column.Filters[0].Value" (keyup)="filterStringModelChange()" autocomplete="off" [disabled]="!Column.ReadAllowed">
+        </form>
+        <!-- <span>{{Column.Filters[0].Operation}}</span> -->
+      </div>
+
+    </div>
+  </ng-template>
+</ng-container>
+<ng-template #MultiFilters>
+  <div class="filters-active w-100 d-flex align-items-center" (click)="triggerAdvancedFilter()">
+    <span class="active-filters"><i class="fa fa-filter" aria-hidden="true"></i> {{Column.Filters.length}}
+      Filters</span> <span class="ml-2 w-100 text-right"><i class="fa fa-minus-circle text-danger" aria-hidden="true"
+        title="Clear Filters" (click)='clearFilters()'></i></span>
+  </div>
+</ng-template>

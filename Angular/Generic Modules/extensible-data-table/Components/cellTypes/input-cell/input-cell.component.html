@@ -1,0 +1,48 @@
+<div class="form-group" *ngIf="control">
+<ng-container *ngIf="col.DataType === 's';">
+    <ng-container *ngTemplateOutlet="TextInput"></ng-container>
+</ng-container>
+<ng-container *ngIf="col.DataType === 'd';">
+    <ng-container *ngTemplateOutlet="DateInput"></ng-container>
+</ng-container>
+<ng-container *ngIf="col.DataType === 'p';">
+    <!-- <ng-container *ngTemplateOutlet="PercentInput"></ng-container> -->
+    <ng-container *ngTemplateOutlet="NumberInput"></ng-container>
+</ng-container>
+<ng-container *ngIf="col.DataType !== 'd' && col.DataType !== 's' && col.DataType !== 'p'">
+    <ng-container *ngTemplateOutlet="NumberInput"></ng-container>
+</ng-container>
+<div class="error-popup" *ngIf="!control.valid && control.touched">
+  <ng-container *ngIf="control.errors.required">
+    this field is&nbsp;required
+  </ng-container>
+</div>
+</div>
+
+<ng-template #TextInput>
+    <input name="col.ColumnName" [formControl]="control" type="text" [placeholder]="col.Title" >
+</ng-template>
+<ng-template #DateInput>
+    <!-- <input name="col.ColumnName" [formControl]="control" type="text" [placeholder]="col.Title" > -->
+    <div class="d-flex flex-wrap date-field">
+        <div class="d-flex w-100">
+          <input class="w-100" placeholder="MassMod Edit" type="text" [formControl]="control" >
+          <span class="filter-type d-flex align-items-center calendar" (click)="datepickerOpen(datepicker)">
+            <i class="fa fa-calendar" aria-hidden="true"></i>
+          </span>
+        </div>
+        <div class="w-100">
+          <material-date-picker class="w-100" [ngModel]="tempDate" (ngModelChange)="datepickerChange($event)" #datepicker [showInput]="false" >
+          </material-date-picker>
+        </div>
+    </div>
+</ng-template>
+<ng-template #NumberInput>
+  <!-- <form #InputForm="ngForm"> -->
+    <!-- <input name="col.ColumnName" [formControl]="control" type="number" required [placeholder]="col.Title"> -->
+    <input name="col.ColumnName" [formControl]="control" type="number" [placeholder]="col.Title">
+  <!-- </form> -->
+</ng-template>
+<ng-template #PercentInput>
+    <input name="col.ColumnName" [formControl]="control" type="text" mask="percent" suffix="%" [placeholder]="col.Title" >
+</ng-template>

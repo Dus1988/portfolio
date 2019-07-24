@@ -1,0 +1,258 @@
+<div class="card w-100 h-100 " [attr.data-type]="Model.ChartType" [attr.data-chartid]="Model.ChartID">
+  <div class="flip" [class.flipped]="flipped">
+      <div class="front " >
+        <div class="w-100 h-100 d-flex flex-column" id="export-{{Model.ChartID}}">
+          <div class="card-head d-flex align-items-center">
+            <div class="w-100 d-flex drag-handler align-items-center">
+              <div class="title pr-2">
+                {{Model.ChartName}}
+              </div>
+              <div class="pl-2 subtitle w-100">
+                {{Model.ChartSubtitle}}
+              </div>
+            </div>
+            <div class="actions align-items-center no-export" *ngIf="showAction">
+              <!-- <span *ngIf="min || max" class="fa-stack fa-large" ngbTooltip="Clear Min/Max Filter" container="body" placement="top" triggers="hover" (click)="clearMinMax()">
+                  <i class="fa fa-filter fa-stack-1x" aria-hidden="true"></i>
+                  <i class="fa fa-ban fa-stack-2x text-danger"></i>
+              </span> -->
+              <span *ngIf="Actions.export" ngbDropdown ngbDropdownToggle id="export" container="body" placement="bottom-right">
+                <i class="fa fa-download" ngbTooltip="Export" placement="top" container="body" triggers="hover"></i>
+                <div class="export-dropdown" ngbDropdownMenu aria-labelledby="export">
+                    <div ngbDropdownItem (click)="exportChartToImage(_ExportTypes.JPG)">
+                        <i class="fa fa-image"></i> JPG (White Background)
+                    </div>
+                    <div ngbDropdownItem (click)="exportChartToImage(_ExportTypes.PNG)">
+                        <i class="fa fa-file-image-o"></i> PNG (Transparent Background)
+                    </div>
+                    <div ngbDropdownItem (click)="exportChartToImage(_ExportTypes.PDF)">
+                        <i class="fa fa-file-pdf-o"></i> PDF
+                    </div>
+                    <div ngbDropdownItem (click)="exportChartToXLSX()">
+                        <i class="fa fa-table" *ngIf="!exporting"></i><i class="fa fa-circle-o-notch fa-spin"
+                              *ngIf="exporting" aria-hidden="true"></i> Excel
+                    </div>
+                  </div>
+              </span>
+              <span *ngIf="Actions.tableView" >
+                <ng-container *ngIf="!tableView; else ChartViewIcon">
+                  <ng-container *ngIf="showUnitCountToggle; else TableViewToggle">
+                      <i class="fa fa-table" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Table View / Unit Counts" container="body" placement="top" triggers="hover"></i>
+                  </ng-container>
+                  <ng-template #TableViewToggle>
+                    <i class="fa fa-table" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Table View" container="body" placement="top" triggers="hover"></i>
+                  </ng-template>
+                </ng-container>
+                <ng-template #ChartViewIcon>
+                  <i class="fa fa-bar-chart" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Chart View" container="body" placement="top" triggers="hover" *ngIf="Model.ChartType ==='combo bar' || Model.ChartType === 'normal bar' || Model.ChartType === 'stacked bar'"></i>
+                  <i class="fa fa-pie-chart" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Chart View" container="body" placement="top" triggers="hover" *ngIf="Model.ChartType=='pie'"></i>
+                  <i class="fa fa-line-chart" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Chart View" container="body" placement="top" triggers="hover" *ngIf="Model.ChartType=='line'"></i>
+                  <i class="fa fa-tachometer" aria-hidden="true" (click)="toggleTableView()" ngbTooltip="Chart View" container="body" placement="top" triggers="hover" *ngIf="Model.ChartType ==='gauge' || Model.ChartType ==='gaugeV2'"></i>
+                </ng-template>
+              </span>
+              <!-- <span *ngIf="showUnitCountToggle" ngbTooltip="Show Unit Counts" container="body" placement="top" triggers="hover">
+                <i class="fa fa-truck" aria-hidden="true" [class.active]="showUnitCounts" (click)="toggleUnitCounts()"></i>
+              </span> -->
+              <span  *ngIf="Actions.sort && (Model.ChartType !=='pie' && Model.ChartType !== 'gauge' && Model.ChartType !== 'gaugeV2')" 
+              ngbDropdown ngbDropdownToggle id="sort" container="body" placement="bottom-right">
+                <i class="fa fa-sort" aria-hidden="true" ngbTooltip="Sort" placement="top"  container="body" triggers="hover"></i>
+                  <div class="sort-dropdown" ngbDropdownMenu aria-labelledby="sort">
+                    <div ngbDropdownItem *ngFor="let measure of measures" (click)="sortBy(measure.name)">
+                      <ng-container *ngIf="sort.sortBy === measure.name">
+                        <ng-container [ngSwitch]="sort.order">
+                            <i class="fa fa-sort-amount-desc" aria-hidden="true" *ngSwitchCase="'desc'"></i>
+                            <i class="fa fa-sort-amount-asc" aria-hidden="true" *ngSwitchCase="'asc'"></i>
+                        </ng-container>
+                      </ng-container>
+                      Y Axis <span *ngIf="measures.length > 1">- {{measure.title}}</span></div>
+                      <!-- MULTI DIMENSION FILTERING - TURN OFF FOR NOW -->
+                    <!-- <div ngbDropdownItem *ngFor="let dimension of dimensions" (click)="sortBy(dimension.name, 'dimension')">
+                        <ng-container *ngIf="sort.sortBy === dimension.name">
+                            <ng-container [ngSwitch]="sort.order">
+                                <i class="fa fa-sort-amount-desc rotate" aria-hidden="true" *ngSwitchCase="'desc'"></i>
+                                <i class="fa fa-sort-amount-asc rotate" aria-hidden="true" *ngSwitchCase="'asc'"></i>
+                            </ng-container>
+                          </ng-container>
+                        X Axis <span *ngIf="dimensions.length > 1">- {{dimension.title}}</span>
+                      </div> -->
+                      <div ngbDropdownItem (click)="sortBy(dimensions[0].name)" *ngIf="dimensions.length > 0">
+                        <ng-container *ngIf="sort.sortBy === dimensions[0].name">
+                          <ng-container [ngSwitch]="sort.order">
+                            <i class="fa fa-sort-amount-desc rotate" aria-hidden="true" *ngSwitchCase="'desc'"></i>
+                            <i class="fa fa-sort-amount-asc rotate" aria-hidden="true" *ngSwitchCase="'asc'"></i>
+                          </ng-container>
+                        </ng-container>
+                        X Axis
+                      </div>
+                  </div>
+              </span>
+              <span *ngIf="Actions.flip" ngbTooltip="Options" container="body" placement="top" triggers="hover">
+                <i class="fa fa-chevron-right" aria-hidden="true" (click)="flipped = true"></i>
+              </span>
+              <span *ngIf="Actions.save" ngbTooltip="Save Chart" container="body" placement="top" triggers="hover">
+                  <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                </span>
+            </div>
+          </div>
+          <div class="card-body h-100" [class.slideIn]="slideIn">
+            <div class="blurable d-flex flex-column">
+              <!-- *Turning off template injection for now -->
+                <!-- <ng-container *ngIf="front; else frontSetup">
+                  <ng-container *ngTemplateOutlet="front"></ng-container>
+                </ng-container>
+                <ng-template #frontSetup>
+                  <div class="h-100 d-flex align-items-center justify-content-center">Front container needs a template injected.</div>
+                </ng-template> -->
+                <ng-container *ngIf="ready && Data.length > 0">
+                  <div class="h-100 w-100 overflow" [class.d-none]="!tableView" [class.d-flex]="tableView">
+                    <extensible-table [Config]="tableConfig" [busy]="false" #table class="w-100 h-100 overflow"></extensible-table>
+                  </div>
+                  <div class="h-100 w-100" [class.d-none]="tableView" [class.d-flex]="!tableView">
+                      <ng-container *ngIf="Model.ChartType ==='gauge' || Model.ChartType ==='gaugeV2'">
+                          <display-gauge-chart #chart [Model]="Model" [RawData]="Data" ></display-gauge-chart>
+                      </ng-container>
+                
+                      <ng-container *ngIf="Model.ChartType ==='combo bar' || Model.ChartType === 'normal bar'">
+                          <echarts-bar-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></echarts-bar-chart>
+                          <!-- <chartjs-bar-chart #chart [Model]="Model" [RawData]="Data" [showUnitCount]="showUnitCounts" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></chartjs-bar-chart> -->
+                      </ng-container>
+                
+                      <ng-container *ngIf="Model.ChartType ==='stacked bar'">
+                          <!-- <echarts-stacked-bar-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></echarts-stacked-bar-chart> -->
+                          <chartjs-stacked-bar-chart #chart [Model]="Model" [RawData]="Data" [showUnitCount]="showUnitCounts" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></chartjs-stacked-bar-chart>
+                      </ng-container>
+                
+                      <ng-container *ngIf="Model.ChartType=='pie'">
+                          <echarts-pie-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></echarts-pie-chart>
+                          <!-- <chartjs-pie-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></chartjs-pie-chart> -->
+                      </ng-container>
+                
+                      <ng-container *ngIf="Model.ChartType=='line'">
+                          <echarts-line-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></echarts-line-chart>
+                        <!-- <chartjs-line-chart #chart [Model]="Model" [RawData]="Data" [additionalFiltersJSON]="additionalFiltersJSON" (ChartClicked)="chartClicked($event)"></chartjs-line-chart> -->
+                      </ng-container>
+                  </div>
+                  <div *ngIf="additionalFiltersJSON.length > 0">
+                    <button class="btn btn-block btn-hero-info" (click)="clearFilter()">Clear Filter<span *ngIf="additionalFiltersJSON.length > 1">s</span></button>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!ready">
+                  <speedometer [loadingMessage]="'Loading Chart Data...'"></speedometer>
+                </ng-container>
+                <ng-container *ngIf="ready && Data.length === 0">
+                  <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                    <div class="w-100 text-center">
+                      <i class="fa fa-exclamation-triangle text-danger" style="font-size: 1.6rem;" aria-hidden="true"></i>
+                      <h4 class="w-100 mt-2">
+                        No Data Available For Client
+                      </h4>
+                    </div>
+                      
+                  </div>
+                </ng-container>
+              <!-- !OLD Below -->
+              <!-- <ng-container *ngIf="Model.ChartType ==='gauge' || Model.ChartType ==='gaugeV2'">
+                <create-gauge-chart [ClientGroup]="ClientGroup" [DateFrom]="DateFrom" [DateTo]="DateTo" [Model]="Model">
+                </create-gauge-chart>
+              </ng-container> -->
+        
+              <!-- <ng-container *ngIf="Model.ChartType ==='combo bar' || Model.ChartType === 'normal bar'">
+                <create-chartjs-combo-bar [ClientGroup]="ClientGroup" [DateFrom]="DateFrom" [DateTo]="DateTo" [Model]="Model">
+                </create-chartjs-combo-bar>
+              </ng-container>-->
+
+              <!-- <ng-container *ngIf="Model.ChartType ==='stacked bar'">
+                <create-ngx-chart-stacked-bar style="display:contents;" [ClientGroup]="ClientGroup" [DateFrom]="DateFrom"
+                  [DateTo]="DateTo" [Model]="Model">
+                </create-ngx-chart-stacked-bar>
+              </ng-container> -->
+        
+              <!-- <ng-container *ngIf="Model.ChartType=='pie'">
+                <create-echarts-pie [ClientGroup]="ClientGroup" [DateFrom]="DateFrom" [DateTo]="DateTo" [Model]="Model">
+                </create-echarts-pie>
+              </ng-container> -->
+        
+              <!-- <ng-container *ngIf="Model.ChartType=='line'">
+                <create-echarts-line [ClientGroup]="ClientGroup" [DateFrom]="DateFrom" [DateTo]="DateTo" [Model]="Model">
+                </create-echarts-line>
+              </ng-container> -->
+            </div>
+            <div class="slideInBody d-flex align-items-center justify-content-center">
+              <h1>Test Slide In Panel</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="back d-flex flex-column">
+          <div class="card-head d-flex align-items-center">
+              <div class="w-100 d-flex drag-handler align-items-center">
+                  <div class="title pr-2">
+                      {{Model.ChartName}}
+                    </div>
+                    <div class="pl-2 subtitle w-100">
+                      {{Model.ChartSubtitle}}
+                    </div>
+              </div>
+              <div class="actions align-items-center">
+                <i class="fa fa-chevron-left" aria-hidden="true" (click)="flipped = false"></i>
+              </div>
+            </div>
+            <div class="card-body h-100">
+                <!-- <ng-container *ngIf="back; else backSetup">
+                  <ng-container *ngTemplateOutlet="back"></ng-container>
+                </ng-container>
+                <ng-template #backSetup>
+                  <div class="h-100 d-flex align-items-center justify-content-center">Back container needs a template injected.</div>
+                </ng-template> -->
+                
+                <div class="tab-container">
+                  <ngb-tabset>
+                    <ngb-tab>
+                      <ng-template ngbTabTitle>Config</ng-template>
+                      <ng-template ngbTabContent>
+                        <div class="tab-menu">
+                          <div class="tab-menu-option" *ngIf="!clientDemoRead && showAddToHome" (click)="addToHome()">
+                            <span>
+                              <i class="fa fa-plus-circle" *ngIf="!addingToHome"></i><i class="fa fa-circle-o-notch fa-spin"
+                              *ngIf="addingToHome" aria-hidden="true"></i> Add to Home Dashboard
+                            </span>
+                          </div>
+                          <div class="tab-menu-option"  *ngIf="!clientDemoRead" (click)="removeChart()">
+                            <!-- <span *ngIf="chartIndex === i">
+                              Removing...<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>
+                            </span> -->
+                            <span>
+                              <i class="fa fa-minus-circle"></i> Hide from Dashboard
+                            </span>
+                          </div>
+                          <!-- <div class="tab-menu-option noHover">
+                            <form>
+                              <div class="row align-items-center">
+                                <div class="col-6">
+                                  <i class="fa fa-arrows-h"></i> Card Size
+                                </div>
+                                <div class="col-6">
+                                  <div class="row">
+                                    <select class="form-control col-12" name="CardSize" [ngModel]="Model.Size"
+                                      (ngModelChange)="resizeChart(Model, $event)">
+                                      <option [value]="_CardSizes.Sm">Small</option>
+                                      <option [value]="_CardSizes.Md">Medium</option>
+                                      <option [value]="_CardSizes.Lg">Large</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div> -->
+                          <div class="tab-menu-option" (click)="editChart()">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit in Chart Editor
+                          </div>
+                        </div>
+                      </ng-template>
+                    </ngb-tab>
+                  </ngb-tabset>
+                </div>
+            </div>
+      </div>
+  </div>
+</div>

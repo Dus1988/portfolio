@@ -1,0 +1,96 @@
+
+
+.form-group {
+
+    margin: 0;
+    position: relative;
+
+    input {
+        padding: 0.25rem;
+        border-radius: 0.375rem; 
+        // border: none;
+        border: 1px solid #333;
+        background: none;
+        max-width: 110px;
+        
+            background: #fff;
+     
+        &.ng-invalid.ng-touched {
+            border-color: #fb3030;
+        }
+        
+        &:focus {
+            border-color: #1184ff;
+            outline: none;
+        }
+     }
+
+    .error-popup {
+        background: #fb3030;
+        padding: 0.3rem;
+        color: white;
+        border-radius: 0.375rem;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        height: auto;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+        line-height: 1.2;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        width: 100%;
+        white-space: normal;
+        line-height: 1.2;
+        text-align: center;
+        z-index: 1;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 5px 5px 5px;
+            border-color: transparent transparent #fb3030 transparent;
+        }
+    }
+
+    .date-field {
+        input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: 0;
+        }
+
+        .calendar {
+            padding: 0.225rem 5px;
+            background: #fff;
+            border: 1px solid #333;
+            border-radius: 0.375rem;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-left: 0;
+            line-height: 0;
+            transition: color 0.3s ease-in-out;
+            cursor: pointer;
+
+            &:hover {
+                color: #1184ff;
+            }
+        }
+    }
+
+    
+
+}
+
+
+
+::host {
+   display: flex;
+    width: 100%;
+}

@@ -1,0 +1,24 @@
+<ng-container *ngIf="!row.isEditMode; else EditMode">
+    <ng-container *ngTemplateOutlet="DisplayMode"></ng-container>
+</ng-container>
+<ng-template #DisplayMode>
+  <ng-container *ngIf="col.Cell.DisplayComponent === _CellTypes.Data ">
+    <data-cell [col]="col" [row]="row" [popoverComponent]="popoverComponent"></data-cell>
+  </ng-container>
+  <ng-container *ngIf="col.Cell.DisplayComponent === _CellTypes.Input">
+    <input-cell [col]="col" [row]="row" [popoverComponent]="popoverComponent"></input-cell>
+  </ng-container>
+  <ng-container *ngIf="col.Cell.DisplayComponent === _CellTypes.Select">
+    <select-cell [col]="col" [row]="row" [popoverComponent]="popoverComponent"></select-cell>
+  </ng-container>
+</ng-template>
+<ng-template #EditMode>
+  <ng-container *ngIf="col.Cell.EditComponent && col.EditAllowed; else DisplayMode">
+      <ng-container *ngIf="col.Cell.EditComponent === _CellTypes.Input">
+        <input-cell [col]="col" [row]="row"></input-cell>
+      </ng-container>
+      <ng-container *ngIf="col.Cell.EditComponent === _CellTypes.Select">
+        <select-cell [col]="col" [row]="row"></select-cell>
+      </ng-container>
+  </ng-container>
+</ng-template>

@@ -1,0 +1,45 @@
+<toaster-container [toasterconfig]="toastConfig"></toaster-container>
+<ng-container *ngIf="ready; else loading">
+    <div *ngIf="originalAllChartCreation.length > 0" class="d-flex flex-column">
+      <div *ngIf="topContent">
+        <ng-container *ngTemplateOutlet="topContent"></ng-container>
+      </div>
+    
+      <div class="h-100 gridster-wrapper resizing" >
+        <ngx-gridster [options]="options" [draggableOptions]="draggableOptions" id="grid" (optionsChange)="optionsChanged($event)" #gridster>
+          <ngx-gridster-item *ngFor="let chart of allChartCreation; let idx = index"
+          [x]="chart.GridOption.x"
+          [y]="chart.GridOption.y"
+          [(w)]="chart.GridOption.w"
+          [(wSm)]="chart.GridOption.wSm"
+          [(wMd)]="chart.GridOption.wMd"
+          [(h)]="chart.GridOption.h"
+          [options]="chart.GridOption.options"
+          (change)="dashItemChanged($event, idx)"
+          [attr.data-cols]="chart.GridOption.w"
+          [attr.data-rows]="chart.GridOption.h">
+            <gridster-flip-card [ClientGroup]="Config.clientGroup" [DateFrom]="Config.dateFrom" [DateTo]="Config.dateTo"
+              [Model]="allChartCreation[idx]" [clientDemoRead]="clientDemoRead" (emitToast)="toastEmitted($event)" (ChartRemoved)="chartRemoved($event, idx)">
+            </gridster-flip-card>
+          </ngx-gridster-item>
+        </ngx-gridster>
+      </div>
+      <div *ngIf="bottomContent">
+        <ng-container *ngTemplateOutlet="bottomContent"></ng-container>
+      </div>
+    </div>
+    <div *ngIf="originalAllChartCreation.length === 0" class="row col-2">
+        <div class="btn-group btn-group-full-width" role="group" >
+          <button type="button" class="btn btn-info btn-group-icon btn-group-divider btn-fixed" [routerLink]="['/home/settings/manage-charts']">
+            <i class="nb-bar-chart"></i>
+          </button>
+          <button type="button" class="btn btn-info" [routerLink]="['/home/settings/manage-charts']">Chart Management</button>
+        </div>
+        <!-- <a class="btn btn-hero-info main-btn pointer" [routerLink]="['/home/settings/manage-charts']">
+          <i class="nb-bar-chart" style="font-size: 2rem;">Chart Management</i>
+        </a> -->
+    </div>
+</ng-container>
+<ng-template #loading>
+  <speedometer [loadingMessage]="'Getting Chart Configurations...'"></speedometer>
+</ng-template>

@@ -1,0 +1,47 @@
+<ng-container *ngIf="Column.EditAllowed && Column.Cell.EditComponent">
+  <!-- <i class="fa fa-pencil" aria-hidden="true"></i> -->
+  <div class="mr-2 d-flex w-100">
+    <ng-container *ngIf="Column.Cell.EditComponent === _CellTypes.Select; else InputCell">
+      <select [(ngModel)]="Column.MassModValue">
+        <option value="">Select a Value</option>
+        <option *ngFor="let option of Column.Cell.selectOptions" [ngValue]="option">{{option}}</option>
+      </select>
+    </ng-container>
+    <ng-template #InputCell>
+        <ng-container *ngIf="Column.DataType === 's'">
+            <input class="w-100" placeholder="MassMod Edit" type="text" (focus)="Column.checkUniqueValues(Data)"
+              [(ngModel)]="Column.MassModValue">
+            <span ngbDropdown class="filter-type d-flex align-items-center" container="body" placement="bottom-right"
+              ngbDropdownToggle id="massMod-Type-Dropdown" (click)="Column.checkUniqueValues(Data)">
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+              <div class="filter-dropdown" ngbDropdownMenu aria-labelledby="Filter-Type-Dropdown">
+                <div *ngFor="let val of Column.uniqueValues" ngbDropdownItem (click)="insertMassModValue(val, Column)">
+                  {{_CustomFormatter(val, Column.FormatCode)}}</div>
+                <!-- <div ngbDropdownItem >testing123</div> -->
+              </div>
+            </span>
+        </ng-container>
+        <ng-container *ngIf="Column.DataType === 'n' || Column.DataType === 'p' || Column.DataType === 'c' ">
+            <input class="w-100 simple" placeholder="MassMod Edit" type="number"
+            [(ngModel)]="Column.MassModValue">
+        </ng-container>
+        <ng-container *ngIf="Column.DataType === 'd'">
+          <div class="d-flex flex-wrap">
+              <div class="d-flex w-100">
+                <input class="w-100" placeholder="MassMod Edit" type="text" [(ngModel)]="Column.MassModValue">
+                <span class="filter-type d-flex align-items-center calendar" (click)="datepickerOpen(datepicker)">
+                  <i class="fa fa-calendar" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div class="w-100">
+                <material-date-picker class="w-100" [ngModel]="tempDate" (ngModelChange)="datepickerChange($event)" #datepicker [showInput]="false" >
+                </material-date-picker>
+              </div>
+          </div>
+        </ng-container>
+    </ng-template>
+  </div>
+  <i class="fa fa-floppy-o" aria-hidden="true" (click)="save()"></i>
+</ng-container>
+<i class="fa fa-lock" aria-hidden="true" *ngIf="!Column.EditAllowed || !Column.Cell.EditComponent" ngbTooltip="Edits not allowed" placement="top" triggers="hover" container="body"
+[openDelay]="500"></i>

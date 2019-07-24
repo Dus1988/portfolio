@@ -1,0 +1,32 @@
+<ng-container *ngIf="CurrentPage !== 1; else firstPageDisabledArrows">
+  <div class="control" title="First" (click)="setDisplaySet('--')">
+    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+  </div>
+  <div class="control" title="Previous" (click)="setDisplaySet('-')">
+    <i class="fa fa-angle-left" aria-hidden="true"></i>
+  </div>
+</ng-container>
+<div class="control" *ngFor="let page of displayedPageControls" [class.active]="page === CurrentPage" (click)="setDisplaySet(page)">{{page}}</div>
+<ng-container *ngIf="CurrentPage !== NumPages.length; else lastPageDisabledArrows">
+  <div class="control" title="Next" (click)="setDisplaySet('+')">
+    <i class="fa fa-angle-right" aria-hidden="true"></i>
+  </div>
+  <div class="control" title="Last" (click)="setDisplaySet('++')">
+    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+  </div>
+</ng-container>
+
+
+<ng-template #firstPageDisabledArrows>
+  <div class="control disabled" title="First" ><i
+      class="fa fa-angle-double-left" aria-hidden="true"></i></div>
+  <div class="control disabled" title="Previous" ><i
+      class="fa fa-angle-left" aria-hidden="true"></i></div>
+</ng-template>
+
+<ng-template #lastPageDisabledArrows>
+    <div class="control disabled" title="Next" ><i
+      class="fa fa-angle-right" aria-hidden="true"></i></div>
+  <div class="control disabled" title="Last" ><i
+      class="fa fa-angle-double-right" aria-hidden="true"></i></div>
+  </ng-template>

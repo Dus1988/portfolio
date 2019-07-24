@@ -1,0 +1,27 @@
+<ng-container
+  *ngIf="col.ShowRawData && row.raw[col.ColumnName] !== row.raw[col.ColumnName]; else NoRawData">
+  <ng-container *ngIf="action; else IdentifierNotClickable">
+    <div class="clickable" (click)="actionClicked(action.ActionName, row)"
+      ngbTooltip="{{action.ActionName}}" placement="bottom" triggers="hover" container="body">
+      {{displayValue}}
+    </div>
+  </ng-container>
+  <ng-template #IdentifierNotClickable>
+    <div class="" [title]="row.raw[col.ColumnName]" [style.color]="color" [class.font-weight-bold]="color !== ''" ngbTooltip="{{toolTip}}" placement="top" triggers="hover" container="body">
+      {{displayValue}}
+    </div>
+  </ng-template>
+</ng-container>
+<ng-template #NoRawData>
+  <ng-container *ngIf="action; else IdentifierNotClickable">
+    <div class="clickable" (click)="actionClicked(action, row)"
+      ngbTooltip="{{action.ActionName}}" placement="bottom" triggers="hover" container="body">
+      {{displayValue}}
+    </div>
+  </ng-container>
+  <ng-template #IdentifierNotClickable>
+    <div class="" [style.color]="color" [class.font-weight-bold]="color !== ''" ngbTooltip="{{toolTip}}" placement="top" triggers="hover" container="body">
+      {{displayValue}}
+    </div>
+  </ng-template>
+</ng-template>

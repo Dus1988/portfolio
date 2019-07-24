@@ -1,0 +1,65 @@
+::ng-deep .modal-sm {
+    min-width: 40vw;
+}
+
+:host {
+    .filter-row {
+        border-bottom: 1px solid #dadfe6;
+        padding: 14px 0;
+
+        &:last-of-type {
+            border-bottom: 0;
+        }
+
+        select, input {
+            height: calc(1rem + 20px);
+            padding: 0 0.35rem;
+        }
+
+        select {
+            width: auto;
+        }
+
+
+        .form-group {
+            margin: 0;
+        }
+
+        .fa {
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                color: red;
+            }
+        }
+    }
+
+    .action-row {
+
+        .action {
+            font-size: 20px;
+            line-height: 20px;
+            cursor: pointer;
+            padding: 0 8px;
+            border-right: 1px solid #bababa;
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+
+            :hover {
+                color: #1184ff;
+            }
+
+            &:nth-of-type(0) {
+                padding-left: 0;
+            }
+
+            &:last-of-type {
+                border-right: none;
+            }
+        }
+    }
+}
+

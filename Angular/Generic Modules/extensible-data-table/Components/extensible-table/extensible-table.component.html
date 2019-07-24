@@ -1,0 +1,165 @@
+<div class="extensible-table d-flex flex-column">
+  <div class="table-header w-100">
+    <ng-container *ngIf="InjectedHeaderTemplate && !busy">
+      <ng-container *ngTemplateOutlet="InjectedHeaderTemplate"></ng-container>
+    </ng-container>
+    <div class="table-actions w-100 d-flex align-items-center justify-content-start mb-2 mt-2"
+      *ngIf="Config.Data.length > 0 && !busy">
+      <div class="fa-stack action icon" *ngIf="Config.FilteredCols.length > 0" (click)="clearAllFilters()">
+
+        <i class="fa fa-ban fa-stack-2x text-danger"></i><i class="fa fa-filter fa-stack-1x"></i>
+
+      </div>
+      <div class="action d-flex align-items-center" *ngIf="Config.ItemsPerPageConfigurable">
+        <div class="h-100 d-flex align-items-center">
+          <label for="TableRowCountPicker">
+            <i class="fa fa-bars" aria-hidden="true" title="Row Count: {{Config.ItemsPerPage}}"></i>
+          </label>
+        </div>
+        <select class="form-control ml-2" name="TableRowCountPicker" id="TableRowCountPicker"
+          [ngModel]="Config.ItemsPerPage" (ngModelChange)="ItemsPerPageChange($event)">
+          <!-- <option *ngIf="Config.showAllEnabled" [value]='0'>All</option> -->
+          <option *ngFor="let option of Config.pagingOptions" [value]="option"><ng-container *ngIf="option === 0">All</ng-container><ng-container *ngIf="option !== 0">{{option}}</ng-container></option>
+        </select>
+      </div>
+      <ng-container *ngIf="Config.tableActions.length > 0">
+        <ng-container *ngFor="let action of Config.tableActions">
+            <div class="action d-flex align-items-center highlight" (click)="action.ActionFn()" *ngIf="action.DisplayFn()">
+                <i class="fa fa-{{action.Icon}}" aria-hidden="true" ngbTooltip="{{action.Name}}" placement="top" triggers="hover" container="body"
+                [openDelay]="500"></i>
+            </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div class="table-body d-flex w-100 h-100" [ngClass]="RowCountClass" *ngIf="!busy && Config.Data.length > 0">
+    <ng-container>
+      
+      
+      <div class="table-data d-flex w-100 h-100" 
+      #tableData
+      checkOverflow 
+      cdkDropList  
+      dropListScroller
+      cdkDropListOrientation="horizontal" 
+      (cdkDropListDropped)="drop($event)" 
+      [cdkDropListDisabled]="!Config.ColumnsOrderable">
+      
+        <ng-container *ngFor="let col of Config.Columns;  let idx = index">
+          <ng-template #Column>
+              <div class="table-col flex-fill" [attr.data-columnId]="col.Id" cdkDrag>
+                <div class="col-drag-placeholder" *cdkDragPlaceholder>
+              
+                </div>
+                <div class="sticky-top">
+                  <div class="table-cell drag" *ngIf="Config.ColumnsOrderable" cdkDragHandle><i class="fa fa-arrows"
+                      aria-hidden="true"></i></div>
+                  <!-- <div class="drag-preview" *cdkDragPreview></div> -->
+                  <div class="table-cell header" #header [ngStyle]="{'min-height': headerMinHeight + 'px'}" (click)="assignSort(col)"
+                    ngbTooltip="{{col.Tooltip}}" placement="top" triggers="hover" container="body" [openDelay]="500"
+                    [attr.data-columnName]="col.ColumnName" [attr.data-format]="col.FormatCode">
+                    {{Config.Columns[idx].Title}}
+                    <span class="ml-2 sort-indicator" *ngIf="Config.Sort.sortByColumn.Id === Config.Columns[idx].Id">
+                      <ng-container *ngIf="Config.Sort.order === 'asc'; else Desc"><i class="fa fa-sort-amount-asc"
+                          aria-hidden="true"></i></ng-container>
+                      <ng-template #Desc><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></ng-template>
+                    </span>
+                  </div>
+                  <div class="table-cell table-filter d-flex" *ngIf="Config.AllowFilters" columnFilter [Column]="col"
+                    [AdvancedFilters]="Config.AllowAdvancedFiltering" (filterChanged)="filterChanged($event)">
+                  </div>
+                  <div class="table-cell table-massmod d-flex" *ngIf="Config.enableMassMod" columnMassMod  [Column]="col" [Data]="Config.FilteredData" (MassModSaved)="massModSave($event, col)"></div>
+                </div>
+              
+                <ng-container *ngFor="let row of Rows;  let i = index">
+                  <div class="table-cell data" table-cell [class.error]="row.Form.invalid && row.Form.touched"
+                    [col]="Config.Columns[idx]" [row]="row" [popoverComponent]="Config.popoverComponent"></div>
+                </ng-container>
+                <ng-container *ngIf="Config.ShowAverageRow">
+                    <div class="table-cell totals" >
+                      {{col.average}}
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="Config.ShowTotalsRow">
+                    <div class="table-cell totals" >
+                      {{col.total}}
+                    </div>
+                </ng-container>
+              </div>
+          </ng-template>
+          <!-- <ng-container *ngIf="col.ReadAllowed"> -->
+            <ng-container *ngIf="idx === 0; else Column">
+              <div class="sticky-left d-flex ">
+                  <div class="row-actions table-col" *ngIf="Config.RowActions.length > 0">
+                      <div class="sticky-top">
+                        <div class="table-cell drag no-show" *ngIf="Config.ColumnsOrderable"></div>
+                        <div class="table-cell header" #header [ngStyle]="{'min-height': headerMinHeight + 'px'}">
+                        </div>
+                        <div *ngIf="Config.AllowFilters" class="table-cell table-filter d-flex"></div>
+                        <div *ngIf="Config.enableMassMod" class="table-cell table-massmod d-flex"></div>
+                      </div>
+                      <div class="table-cell data" [class.error]="row.Form.invalid && row.Form.touched" *ngFor="let row of Rows;  let idx = index" [class.has-actions]="row.actions.length > 0">
+                        <ng-container *ngFor="let action of row.actions">
+                          <div class="row-action">
+                            <div class="icon" (click)="actionClicked(action, row)" title="{{action.ActionName}}">
+                              <i class="fa {{action.IconFAClass}}" aria-hidden="true"></i>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+                      <div class="table-cell totals" *ngIf="Config.ShowTotalsRow"></div>
+                      <div class="table-cell totals" *ngIf="Config.ShowAverageRow"></div>
+                  </div>
+                  <div class="identifier-col table-col" [attr.data-columnId]="col.Id">
+                      <div class="sticky-top">
+                        <div class="table-cell drag no-show" *ngIf="Config.ColumnsOrderable"></div>
+                        <div class="table-cell header" #header [ngStyle]="{'min-height': headerMinHeight + 'px'}"
+                          (click)="assignSort(col)" ngbTooltip="{{col.Tooltip}}" placement="top" triggers="hover" container="body"
+                          [openDelay]="500" [attr.data-columnName]="col.ColumnName" [attr.data-format]="col.FormatCode">
+                          {{col.Title}}
+                          <span class="ml-2 sort-indicator" *ngIf="Config.Sort.sortByColumn.Id === col.Id">
+                            <ng-container *ngIf="Config.Sort.order === 'asc'; else Desc"><i class="fa fa-sort-amount-asc"
+                                aria-hidden="true"></i></ng-container>
+                            <ng-template #Desc><i class="fa fa-sort-amount-desc" aria-hidden="true"></i></ng-template>
+                          </span>
+                        </div>
+                        <div class="table-cell table-filter d-flex" *ngIf="Config.AllowFilters" columnFilter [Column]="col"
+                          [AdvancedFilters]="Config.AllowAdvancedFiltering" (filterChanged)="filterChanged($event)">
+                        </div>
+                        <div class="table-cell table-massmod d-flex justify-content-end" *ngIf="Config.enableMassMod" > MassMod </div>
+                      </div>
+                      <ng-container *ngFor="let row of Rows; let idx = index">
+                        <div class="table-cell data" [class.error]="row.Form.invalid && row.Form.touched" identifier-cell [col]="col"
+                          [row]="row" [action]="Config.IdentifierAction" (Clicked)="identifierClicked($event)" [toolTip]="Config.IdentifierTooltip"></div>
+                      </ng-container>
+                      <ng-container *ngIf="Config.ShowAverageRow">
+                          <div class="table-cell totals justify-content-end" >
+                            AVERAGE:
+                          </div>
+                      </ng-container>
+                      <ng-container *ngIf="Config.ShowTotalsRow">
+                          <div class="table-cell totals justify-content-end">
+                            TOTALS:
+                          </div>
+                      </ng-container>
+                    </div>
+              </div>
+            </ng-container>
+          <!-- </ng-container> -->
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+  <div class="speedometer-wrapper mb-5 pb-5 mt-5 pt-5 d-none" [class.d-block]="busy">
+    <speedometer [loadingMessage]="'Getting Data...'"></speedometer>
+  </div>
+  <div class="d-flex h2 justify-content-center font-weight-bold" *ngIf="!busy && Config.Data.length === 0">No data for client available</div>
+  <div class="table-footer" *ngIf="!busy">
+    <div pagingControls class="paging-controls d-flex align-items-center justify-content-center pt-4"
+      *ngIf="Config.NumPages.length > 1" [NumPages]="Config.NumPages" [CurrentPage]="Config.CurrentPage"
+      (PageClicked)="setDisplaySet($event)"></div>
+    <ng-container *ngIf="InjectedFooterTemplate">
+      <ng-container *ngTemplateOutlet="InjectedFooterTemplate"></ng-container>
+    </ng-container>
+  </div>
+</div>

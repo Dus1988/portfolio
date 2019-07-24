@@ -1,0 +1,25 @@
+<!-- <ng-container *ngFor="let row of displayData; let i = index"> -->
+  <ng-container *ngIf="col.ShowRawData && displayValue !== row.raw[col.ColumnName]; else NoRawDataBody">
+    <div [title]="row.raw[col.ColumnName]" [style.color]="color" [class.font-weight-bold]="color !== ''">
+      {{displayValue}}
+    </div>
+  </ng-container>
+  <ng-template #NoRawDataBody>
+    <div [style.color]="color" [class.font-weight-bold]="color !== ''" [attr.data-raw]="row.raw[col.ColumnName]">
+      <ng-container *ngIf="col.ReadAllowed; else Unauthorized">
+        {{displayValue}}
+
+        <!-- <i *ngIf="col.Cell.HasHistory" class="fa fa-info" aria-hidden="true" ngbTooltip="Unauthorized" placement="top" triggers="hover" container="body"></i> -->
+        <!-- <i *ngIf="col.Cell && col.Cell.HasHistory" class="fa fa-info" aria-hidden="true"
+          nbPopoverTrigger="click" nbPopoverPlacement="top" [nbPopover]="popoverComponent">
+        </i> -->
+        <i *ngIf="hasHistory" class="fa fa-{{col.Cell.popoverIcon}} text-warning" aria-hidden="true"
+          nbPopoverTrigger="click" nbPopoverPlacement="top" [nbPopover]="popoverComponent" [nbPopoverContext]="{record: row.raw, column: col.ColumnName}" >
+        </i>
+      </ng-container>
+      <ng-template #Unauthorized>
+        <i class="fa fa-lock" aria-hidden="true" ngbTooltip="Unauthorized" placement="top" triggers="hover" container="body" [openDelay]="500"></i>
+      </ng-template>
+    </div>
+  </ng-template>
+<!-- </ng-container> -->

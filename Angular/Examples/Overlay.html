@@ -1,0 +1,13 @@
+<div class="overlay-component" [class.hidden]="_OverlayConfig.ShowOverlay == false">
+    <div class="overlay" [class.full]="_OverlayConfig.FullScreen">
+        <div class="overlay-close" (click)="tryCloseOverlay()" *ngIf="_OverlayConfig.BackBttn">
+            <i class="material-icons">&#xE5C5;</i>
+        </div>
+        <ng-container *ngIf="_OverlayTemplate; else NoTemplate">
+            <ng-container *ngTemplateOutlet="_OverlayTemplate"></ng-container>
+        </ng-container>
+        <ng-template #NoTemplate>
+            <div class="overlay-header text-center">This Overlay Component is not set up.<br />Please define a template in your main component.</div>
+        </ng-template>
+    </div>
+</div>

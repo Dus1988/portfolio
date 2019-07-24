@@ -22,7 +22,7 @@ Required
 Value can’t be greater than today’s date
 
 ## Screenshot
-https://github.com/Dus1988/portfolio/blob/master/FleetAdvantageLogin/src/assets/images/example.jpg
+https://github.com/Dus1988/portfolio/blob/master/Angular/FleetAdvantageLogin/src/assets/images/example.jpg?raw=true
 
 
 ## Development server

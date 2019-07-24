@@ -21,6 +21,9 @@ Max: 56
 Required
 Value can’t be greater than today’s date
 
+## Screenshot
+[[https://github.com/Dus1988/portfolio/blob/master/FleetAdvantageLogin/src/assets/images/example.jpg|alt=screenshot of project]]
+
 
 ## Development server
 

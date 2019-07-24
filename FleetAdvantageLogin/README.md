@@ -10,14 +10,16 @@ Create a login form using the following tech
 •	Angular 6+
 •	Bootstrap 4
  
-The following fields require validation, and are as follows
-•	First/Last Name 
-    o	Required
-    o	Min: 1
-    o	Max: 56
-•	DOB (Date of birth) 
-    o	Required
-    o	Value can’t be greater than today’s date
+The following fields require validation, and are as follows:
+
+[First/Last Name] 
+Required
+Min: 1
+Max: 56
+
+[DOB (Date of birth)]
+Required
+Value can’t be greater than today’s date
 
 
 ## Development server

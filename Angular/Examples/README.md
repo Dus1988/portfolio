@@ -1,4 +1,5 @@
-##Angular Components and Misc TS file - Examples 
+
+## Angular Components and Misc TS files
 
 This folder is meant to be a collection of examples of TS components, directives, singleton services, ect., that I have developed. 
 

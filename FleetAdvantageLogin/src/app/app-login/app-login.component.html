@@ -1,0 +1,60 @@
+<section class="app-login">
+  <div class="background"></div>
+  <div class="container login-wrapper">
+    <div class="row justify-content-center">
+      <div class="login-card col">
+        <div class="row justify-content-center">
+          <img src="../../assets/images/fa-logo.png" alt="Logo - Fleet Advantage" class="img-fluid" >
+        </div>
+        <h3>Atlaas Portal Login</h3>
+        <div class="row">
+            <form #LoginForm="ngForm">
+                <div class="row">
+                  <div class="col">
+                      <div class="input-group"[class.error]="FirstName.invalid && (FirstName.touched || FirstName.dirty)">
+                        <label for="FirstName">First Name</label>
+                        <input type="text" class="form-control" name="FirstName" id="FirstName" [(ngModel)]="_LoginVm.FirstName" #FirstName="ngModel" required characterCount="56" placeholder="Click to enter" [ngModelOptions]="{ updateOn: 'blur' }">
+
+                      </div>
+                      <div class="input-group-error" *ngIf="FirstName.invalid && (FirstName.touched || FirstName.dirty)">
+                          <span *ngIf="FirstName.errors?.required">^{{RequiredErrorMsg}}</span>
+                          <span *ngIf="FirstName.errors?.characterCount">^{{FirstName.errors.characterCount}}</span>
+                      </div>
+                  </div>
+                  <div class="col">
+                      <div class="input-group" [class.error]="LastName.invalid && (LastName.touched || LastName.dirty)">
+                          <label for="LastName">Last Name</label>
+                          <input type="text" class="form-control" name="LastName" id="LastName" [(ngModel)]="_LoginVm.LastName" #LastName="ngModel" required  characterCount="56" placeholder="Click to enter" [ngModelOptions]="{ updateOn: 'blur' }">
+                      </div>
+                      <div class="input-group-error" *ngIf="LastName.invalid && (LastName.touched || LastName.dirty)">
+                          <span *ngIf="LastName.errors?.required">^{{RequiredErrorMsg}}</span>
+                          <span *ngIf="LastName.errors?.characterCount">^{{LastName.errors.characterCount}}</span>
+                      </div>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group" [class.error]="Birthday.invalid && (Birthday.touched || Birthday.dirty)">
+                            <label for="Birthday">Date of Birth (MM/DD/YYYY)</label>
+                            <input type="text" class="form-control" name="Birthday" id="LastName" [(ngModel)]="_LoginVm.Birthday" #Birthday="ngModel" required futureDateCheck placeholder="Click to enter" [ngModelOptions]="{ updateOn: 'blur' }">
+                        </div>
+                        <div class="input-group-error" *ngIf="Birthday.invalid && (Birthday.touched || Birthday.dirty)">
+                            <span *ngIf="Birthday.errors?.required">^{{RequiredErrorMsg}}</span>
+                            <span *ngIf="Birthday.errors?.futureDateCheck">^{{Birthday.errors.futureDateCheck}}</span>
+                        </div>
+                    </div>
+                </div>
+              </form>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="row justify-content-end">
+                <button type="button" class="btn btn-primary btn-lg" (click)="ValidateForm()">Log In</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
